@@ -14,6 +14,14 @@ gem_group :test do
   gem 'rails-controller-testing'
 end
 
+# Use Bootstrap
+add_source 'https://rails-assets.org' do
+  gem 'rails-assets-tether'
+end
+gem 'sprockets-rails'
+gem 'bootstrap', '~> 4.0.0.alpha6'
+
+# Use haml
 gem 'haml-rails'
 
 after_bundle do
