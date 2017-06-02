@@ -17,6 +17,9 @@ end
 # mini_racer: Minimal embedded v8
 gem 'mini_racer', platforms: :ruby
 
+# Use jquery as the JavaScript library
+gem 'jquery-rails'
+
 # Use Bootstrap
 add_source 'https://rails-assets.org' do
   gem 'rails-assets-tether'
