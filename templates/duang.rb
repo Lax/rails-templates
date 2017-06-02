@@ -1,3 +1,6 @@
+# mini_racer: Minimal embedded v8
+gem 'mini_racer', platforms: :ruby
+
 gem_group :development, :test do
   # Use sqlite3 as the database for Active Record
   gem 'sqlite3'
@@ -14,11 +17,9 @@ gem_group :test do
   gem 'rails-controller-testing'
 end
 
-# mini_racer: Minimal embedded v8
-gem 'mini_racer', platforms: :ruby
-
 # Use jquery as the JavaScript library
 gem 'jquery-rails'
+gem 'jquery-ui-rails'
 
 # Use Bootstrap
 add_source 'https://rails-assets.org' do
