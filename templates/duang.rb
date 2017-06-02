@@ -32,7 +32,7 @@ end
 CODE
 
   #rails_command "haml:erb2haml"
-  #ENV['DATABASE_URL']='sqlite3::memory:'
-  #rails_command "db:create db:migrate"
+  rails_command "db:migrate DATABASE_URL=sqlite3::memory:"
+  rails_command "spec DATABASE_URL=sqlite3::memory:"
 
 end	# end after_bundle
