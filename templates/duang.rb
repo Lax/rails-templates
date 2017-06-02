@@ -14,6 +14,9 @@ gem_group :test do
   gem 'rails-controller-testing'
 end
 
+# mini_racer: Minimal embedded v8
+gem 'mini_racer', platforms: :ruby
+
 # Use Bootstrap
 add_source 'https://rails-assets.org' do
   gem 'rails-assets-tether'
