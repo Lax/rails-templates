@@ -16,6 +16,7 @@ gem 'rails-i18n'
 gem 'devise-i18n'
 gem 'globalize', github: 'globalize/globalize'
 gem 'activemodel-serializers-xml'
+gem 'title'
 
 add_source 'https://rails-assets.org' do
   gem 'rails-assets-tether'
