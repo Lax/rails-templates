@@ -194,6 +194,7 @@ after_bundle do
   route %q{root to: 'pages#landing'}
 
   inside('app/views/pages/') do
+    remove_file 'landing.html.haml'
     file 'landing.html.haml', <<-CODE
 .d-flex.justify-content-center<>
   %h1 Think different.
@@ -216,8 +217,8 @@ bs_theme = ask('Bootstrap theme name? (Go to https://bootswatch.com/4-alpha/ for
 bs_theme = default_theme if bs_theme.blank?
 
 inside('app/assets/stylesheets/%s/' % bs_theme) do
-  run 'curl -sSLO http://bootswatch.com/4-alpha/%s/_variables.scss' % bs_theme
-  run 'curl -sSLO http://bootswatch.com/4-alpha/%s/_bootswatch.scss' % bs_theme
+  get 'http://bootswatch.com/4-alpha/%s/_variables.scss' % bs_theme, '_variables.scss'
+  get 'http://bootswatch.com/4-alpha/%s/_bootswatch.scss' % bs_theme, '_bootswatch.scss'
 end
 
 inside('app/assets/stylesheets') do
