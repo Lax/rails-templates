@@ -64,7 +64,6 @@ gem_group :development, :staging do
 end
 
 #========== Landing ==========#
-
 after_bundle do
   inside('app/views/pages/') do
     create_file 'landing.html.haml', %Q{.d-flex.justify-content-center<>
@@ -103,14 +102,6 @@ inside('app/assets/stylesheets') do
 @import '#{bs_theme}/bootswatch';
 @import 'bootstrap';
 }
-#   create_file 'application.scss', %Q{/*
-#  *= require jquery-ui
-#  */
-#
-# @import '#{bs_theme}/variables';
-# @import '#{bs_theme}/bootswatch';
-# @import 'bootstrap';
-# }
 end
 
 inside('app/assets/javascripts') do
