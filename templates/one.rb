@@ -64,6 +64,35 @@ gem_group :development, :staging do
   gem 'rack-mini-profiler', require: false
 end
 
+#========== Config ==========#
+inside 'config' do
+  run 'mv database.yml database.yml.orig'
+
+  file 'database.yml', <<-CODE
+default: &default
+  adapter: postgresql
+  encoding: utf8
+  pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
+  username: duang
+  password:
+  host: localhost
+
+development:
+  <<: *default
+  url: <%= ENV.fetch("DATABASE_URL") { "sqlite3:%s/%s.sqlite" % [ENV.fetch("DATABASE_DIR", "./db"), Rails.env] } %>
+
+test:
+  <<: *default
+  url: <%= ENV.fetch("DATABASE_URL") { "sqlite3:%s/%s.sqlite" % [ENV.fetch("DATABASE_DIR", "./db"), Rails.env] } %>
+
+production:
+  <<: *default
+  username: <%= ENV['DATABASE_USERNAME'] %>
+  password: <%= ENV['DATABASE_PASSWORD'] %>
+  url: <%= ENV['DATABASE_URL'] %>
+CODE
+end
+
 #========== Layout ==========#
 inside 'app/views/layouts/' do
   gsub_file 'application.html.erb', '= yield', %!= render 'layouts/body'!
@@ -182,6 +211,7 @@ end
 default_theme = :litera
 bs_theme = ask('Bootstrap theme name? (Go to https://bootswatch.com/4-alpha/ for available themes.) [default: %s]: ' % default_theme)
 bs_theme = default_theme if bs_theme.blank?
+
 inside('app/assets/stylesheets/%s/' % bs_theme) do
   run 'curl -sSLO http://bootswatch.com/4-alpha/%s/_variables.scss' % bs_theme
   run 'curl -sSLO http://bootswatch.com/4-alpha/%s/_bootswatch.scss' % bs_theme
@@ -218,10 +248,54 @@ CODE
   end
 end
 
+#========== User ==========#
 after_bundle do
-  generate 'devise:install'
+  unless File.exists? 'config/initializers/devise.rb'
+    generate 'devise:install'
+    generate :devise, :user
+  end
 
-  rails_command 'db:migrate DATABASE_URL=sqlite3::memory:'
+  inside 'spec' do
+    insert_into_file 'factories/users.rb', after: %/factory :user do\n/ do
+      <<-CODE
+    sequence(:email) { |n| "\#{n}@email.com" }
+    password Devise.friendly_token[0, 6]
+
+    factory :user_invalid_password do
+      password Devise.friendly_token[0, 5]
+    end
+
+    factory :user_no_email do
+      email nil
+    end
+
+    factory :user_no_password do
+      password nil
+    end
+CODE
+    end
+
+    gsub_file 'models/user_spec.rb', /^\s.pending .*\n/ do
+      <<-CODE
+  describe "#create" do
+    it "should increment the count" do
+      expect{ create(:user) }.to change{User.count}.by(1)
+    end
+
+    it "should fail without ::email or :password" do
+      expect( build(:user_no_email) ).to be_invalid
+      expect( build(:user_no_password) ).to be_invalid
+    end
+  end
+
+  describe "#email duplicated" do
+    it "should fail with UniqueViolation" do
+      expect { 2.times {create(:user, email: 'duplicate@email.com')} }.to raise_error(ActiveRecord::RecordInvalid)
+    end
+  end
+CODE
+    end
+  end
 end
 
 #========== Helpers ==========#
@@ -271,8 +345,13 @@ RSpec.configure do |config|
 end
 CODE
 
+#========== DB ==========#
+after_bundle do
+  rails_command 'db:migrate'
+end
+
 after_bundle do
   generate 'rspec:install'
 
-  rails_command 'spec DATABASE_URL=sqlite3::memory:'
+  rails_command :spec
 end
