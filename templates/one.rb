@@ -196,6 +196,10 @@ inside('app/assets/stylesheets') do
 @import '#{bs_theme}/variables';
 @import '#{bs_theme}/bootswatch';
 @import 'bootstrap';
+
+body {
+  margin: 72px auto 0 auto;
+}
 CODE
 end
 
