@@ -173,7 +173,7 @@ CODE
       = link_to t('menu.login'), :root, class: active_class(root_path, base: 'nav-item nav-link')
       .nav-item.dropdown
         %a#navbarProfileMenuLink.nav-link.dropdown-toggle{"aria-expanded": "false", "aria-haspopup": "true", "data-toggle": "dropdown"}
-          %i.material-icons.md-18<> account_box
+          %i.material-icons.md-18<> person
           = t('menu.profile')
           %span.caret>
         .dropdown-menu.dropdown-menu-right{"aria-labelledby": "navbarProfileMenuLink"}
