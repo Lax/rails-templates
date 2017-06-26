@@ -121,7 +121,7 @@ CODE
 
   file '_menu.html.haml' do
     <<-CODE
-%nav.navbar.navbar-toggleable-sm.navbar-light.bg-faded
+%nav.navbar.navbar-inverse.bg-primary.fixed-top.navbar-toggleable-sm
   %button.navbar-toggler.navbar-toggler-left.navbar-toggler-right{'aria-controls': 'navbarNavCollapse', 'aria-expanded': 'false', 'aria-label': 'Toggle navigation', 'data-target': '#navbarNavCollapse', 'data-toggle': 'collapse', type: 'button'}
     %span.navbar-toggler-icon
 
@@ -178,7 +178,7 @@ CODE
 end
 
 #========== App Setup ==========#
-default_theme = :pulse
+default_theme = :litera
 bs_theme = ask('Bootstrap theme name? (Go to https://bootswatch.com/4-alpha/ for available themes.) [default: %s]: ' % default_theme)
 bs_theme = default_theme if bs_theme.blank?
 inside('app/assets/stylesheets/%s/' % bs_theme) do
