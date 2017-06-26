@@ -213,7 +213,7 @@ end
 
 #========== App Setup ==========#
 default_theme = :litera
-bs_theme = ask('Bootstrap theme name? (Go to https://bootswatch.com/4-alpha/ for available themes.) [default: %s]: ' % default_theme)
+bs_theme = ask('Bootstrap theme name? (Go to https://bootswatch.com/4-alpha/ for available themes.) [default: %s]: ' % default_theme, :red)
 bs_theme = default_theme if bs_theme.blank?
 
 inside('app/assets/stylesheets/%s/' % bs_theme) do
