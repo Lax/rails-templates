@@ -63,10 +63,44 @@ gem_group :development, :staging do
   gem 'rack-mini-profiler', require: false
 end
 
+#========== Landing ==========#
+generate :controller, :pages, :landing, '--skip', '--no-helper-specs'
+route %q{root to: 'pages#landing'}
+
 #========== App Setup ==========#
+default_theme = :pulse
+bs_theme = ask('Bootstrap theme name? (Go to https://bootswatch.com/4-alpha/ for available themes.) [default: %s]: ' % default_theme)
+bs_theme = default_theme if bs_theme.blank?
+inside('app/assets/stylesheets/%s/' % bs_theme) do
+  run 'curl -sSLO http://bootswatch.com/4-alpha/%s/_variables.scss' % bs_theme
+  run 'curl -sSLO http://bootswatch.com/4-alpha/%s/_bootswatch.scss' % bs_theme
+end
+
 inside('app/assets/stylesheets') do
-  run 'curl -sSLO http://bootswatch.com/paper/_variables.scss'
-  run 'curl -sSLO http://bootswatch.com/paper/_bootswatch.scss'
+  remove_file 'application.css'
+  create_file 'application.scss', <<-CODE
+/*
+ *= require jquery-ui
+ */
+
+@import '#{bs_theme}/variables';
+@import '#{bs_theme}/bootswatch';
+@import 'bootstrap';
+CODE
+end
+
+inside('app/assets/javascripts') do
+  insert_into_file 'application.js', before: '//= require rails-ujs' do
+    <<-CODE
+//= require jquery
+//= require jquery_ujs
+//= require tether
+//= require bootstrap-sprockets
+//= require turbolinks
+//= require rails-timeago
+//= require locales/jquery.timeago.zh-CN.js
+CODE
+  end
 end
 
 after_bundle do
@@ -99,5 +133,5 @@ CODE
 after_bundle do
   generate 'rspec:install'
 
-  rails_command "spec DATABASE_URL=sqlite3::memory:"
+  rails_command 'spec DATABASE_URL=sqlite3::memory:'
 end
