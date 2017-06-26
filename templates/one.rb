@@ -64,6 +64,11 @@ gem_group :development, :staging do
 end
 
 #========== App Setup ==========#
+inside('app/assets/stylesheets') do
+  run 'curl -sSLO http://bootswatch.com/paper/_variables.scss'
+  run 'curl -sSLO http://bootswatch.com/paper/_bootswatch.scss'
+end
+
 after_bundle do
   generate 'devise:install'
 
