@@ -93,6 +93,9 @@ production:
 CODE
 end
 
+#========== Git ==========#
+append_to_file '.gitignore', '/db/*.sqlite'
+
 #========== Layout ==========#
 inside 'app/views/layouts/' do
   gsub_file 'application.html.erb', '= yield', %!= render 'layouts/body'!
