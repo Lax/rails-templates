@@ -67,6 +67,20 @@ end
 generate :controller, :pages, :landing, '--skip', '--no-helper-specs'
 route %q{root to: 'pages#landing'}
 
+inside('app/views/pages/') do
+  create_file 'landing.html.haml', %Q{.d-flex.justify-content-center<>
+  %h1 Think different.}
+end
+inside('spec/views/pages/') do
+  gsub_file 'landing.html.haml_spec.rb', /^\d+pending / do
+    %q{it 'renders landing' do
+    render
+    assert_select 'h1'
+  end
+}
+  end
+end
+
 #========== App Setup ==========#
 default_theme = :pulse
 bs_theme = ask('Bootstrap theme name? (Go to https://bootswatch.com/4-alpha/ for available themes.) [default: %s]: ' % default_theme)
@@ -77,16 +91,24 @@ inside('app/assets/stylesheets/%s/' % bs_theme) do
 end
 
 inside('app/assets/stylesheets') do
-  remove_file 'application.css'
-  create_file 'application.scss', <<-CODE
-/*
- *= require jquery-ui
- */
+  run 'mv application.css application.scss'
+  insert_into_file 'application.scss', %/ *= require jquery-ui\n/, before: /^\s.*= require_tree \.\n/
+  gsub_file 'application.scss', /^\s.*= require_tree \.\n/, ''
+  gsub_file 'application.scss', /^\s.*= require_self\n/, ''
 
+  append_to_file 'application.scss', %Q{
 @import '#{bs_theme}/variables';
 @import '#{bs_theme}/bootswatch';
 @import 'bootstrap';
-CODE
+}
+#   create_file 'application.scss', %Q{/*
+#  *= require jquery-ui
+#  */
+#
+# @import '#{bs_theme}/variables';
+# @import '#{bs_theme}/bootswatch';
+# @import 'bootstrap';
+# }
 end
 
 inside('app/assets/javascripts') do
@@ -107,6 +129,32 @@ after_bundle do
   generate 'devise:install'
 
   rails_command 'db:migrate DATABASE_URL=sqlite3::memory:'
+end
+
+#========== Helpers ==========#
+inside('app/helpers/') do
+  insert_into_file 'application_helper.rb', after: 'module ApplicationHelper' do
+    %Q{
+  def active_class(link_path, base: '')
+    append_class(link_path, append: 'active', base: base)
+  end
+
+  def append_class(link_path, append: '', base: '')
+    current_page?(link_path) ? [append, base].join(' ') : base
+  end
+
+  def flash_class(level, default=[])
+    cls = case level.to_sym
+      when :notice then [:alert, :'alert-info']
+      when :success then [:alert, :'alert-success']
+      when :error then [:alert, :'alert-danger']
+      when :alert then [:alert, :'alert-warning']
+      else []
+    end
+    return cls + default
+  end
+}
+  end
 end
 
 #========== Spec Setup ==========#
