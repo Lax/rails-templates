@@ -64,16 +64,18 @@ gem_group :development, :staging do
 end
 
 #========== Landing ==========#
-generate :controller, :pages, :landing, '--skip', '--no-helper-specs'
-route %q{root to: 'pages#landing'}
 
-inside('app/views/pages/') do
-  create_file 'landing.html.haml', %Q{.d-flex.justify-content-center<>
+after_bundle do
+  inside('app/views/pages/') do
+    create_file 'landing.html.haml', %Q{.d-flex.justify-content-center<>
   %h1 Think different.}
-end
-inside('spec/views/pages/') do
-  gsub_file 'landing.html.haml_spec.rb', /^\d+pending / do
-    %q{it 'renders landing' do
+  end
+
+  generate :controller, :pages, :landing, '--skip', '--no-helper-specs'
+  route %q{root to: 'pages#landing'}
+
+  inside('spec/views/pages/') do
+    gsub_file 'landing.html.haml_spec.rb', /^\s.pending .*\n/, %q{  it 'renders landing' do
     render
     assert_select 'h1'
   end
