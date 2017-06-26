@@ -6,4 +6,5 @@ Useful Rails Templates
     rails new \
         -m=https://github.com/Lax/rails-templates/raw/master/templates/one.rb \
         -d=postgresql \
+        --no-skip-spring \
         <APP NAME>
