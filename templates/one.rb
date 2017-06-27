@@ -170,20 +170,25 @@ CODE
       = content_for?(:controller_menu) ? yield(:controller_menu) : ''
 
     .navbar-nav
-      = link_to t('menu.login'), :root, class: active_class(root_path, base: 'nav-item nav-link')
-      .nav-item.dropdown
-        %a#navbarProfileMenuLink.nav-link.dropdown-toggle{"aria-expanded": "false", "aria-haspopup": "true", "data-toggle": "dropdown"}
-          %i.material-icons.md-18<> person
-          = t('menu.profile')
-          %span.caret>
-        .dropdown-menu.dropdown-menu-right{"aria-labelledby": "navbarProfileMenuLink"}
-          %h6.dropdown-header<
-            Me
-            %br<
-            = precede "@" do
-              %b>= "<login>"
-          .dropdown-divider
-          = link_to t('menu.edit_profile'), :root, class: active_class(root_path, base: 'dropdown-item')
+      - if ! user_signed_in?
+        = link_to t('menu.sign_up'), :new_user_registration, class: active_class(new_user_registration_path, base: 'nav-item nav-link')
+        = link_to t('menu.login'), :new_user_session, class: active_class(new_user_session_path, base: 'nav-item nav-link')
+      - else
+        .nav-item.dropdown
+          %a#navbarProfileMenuLink.nav-link.dropdown-toggle{"aria-expanded": "false", "aria-haspopup": "true", "data-toggle": "dropdown"}
+            %i.material-icons.md-18<> person
+            = t('menu.profile')
+            %span.caret>
+          .dropdown-menu.dropdown-menu-right{"aria-labelledby": "navbarProfileMenuLink"}
+            %h6.dropdown-header<
+              = current_user.email
+              %br<
+              = precede "@" do
+                %b>= current_user.id
+            .dropdown-divider
+            = link_to t('menu.edit_profile'), :edit_user_registration, class: active_class(edit_user_registration_path, base: 'dropdown-item')
+            .dropdown-divider
+            = link_to t('menu.logout'), :destroy_user_session, method: :delete, class: active_class(destroy_user_session_path, base: 'dropdown-item')
 CODE
   end
 end
