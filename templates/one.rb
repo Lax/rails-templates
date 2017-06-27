@@ -362,7 +362,8 @@ end
 CODE
 
 after_bundle do
-  generate 'rspec:install'
+  rails_command 'db:migrate'
 
+  generate 'rspec:install'
   rails_command :spec
 end
