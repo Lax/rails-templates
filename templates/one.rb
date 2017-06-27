@@ -252,7 +252,7 @@ CODE
   end
 end
 
-#========== User ==========#
+#========== Devise ==========#
 after_bundle do
   unless File.exists? 'config/initializers/devise.rb'
     generate 'devise:install'
