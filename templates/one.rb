@@ -188,6 +188,17 @@ CODE
   end
 end
 
+#========== Title ==========#
+inside 'app/views/layouts/' do
+  gsub_file 'application.html.erb', /<title>.*<\/title>/, %!<title><%= title %></title>!
+end
+
+file 'config/locales/title.en.yml', <<-CODE
+en:
+  titles:
+    application: #{app_name.camelize}
+CODE
+
 #========== Landing ==========#
 after_bundle do
   generate :controller, :pages, :landing, '--skip', '--no-helper-specs'
@@ -256,6 +267,7 @@ end
 after_bundle do
   unless File.exists? 'config/initializers/devise.rb'
     generate 'devise:install'
+    generate 'devise:i18n:locale', :'zh-CN'
     generate :devise, :user
   end
 
@@ -348,11 +360,6 @@ RSpec.configure do |config|
   config.include Devise::Test::IntegrationHelpers, type: :request
 end
 CODE
-
-#========== DB ==========#
-after_bundle do
-  rails_command 'db:migrate'
-end
 
 after_bundle do
   generate 'rspec:install'
