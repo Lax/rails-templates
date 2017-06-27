@@ -154,7 +154,7 @@ CODE
 
   file '_menu.html.haml' do
     <<-CODE
-%nav.navbar.navbar-inverse.bg-primary.fixed-top.navbar-toggleable-sm
+%nav#navbar.navbar.navbar-inverse.bg-primary.fixed-top.navbar-toggleable-sm
   %button.navbar-toggler.navbar-toggler-left.navbar-toggler-right{'aria-controls': 'navbarNavCollapse', 'aria-expanded': 'false', 'aria-label': 'Toggle navigation', 'data-target': '#navbarNavCollapse', 'data-toggle': 'collapse', type: 'button'}
     %span.navbar-toggler-icon
 
@@ -193,6 +193,15 @@ CODE
   end
 end
 
+file 'app/assets/javascripts/navbar_hide.coffee', <<-CODE
+$(document).ready ->
+  $(window).scroll ->
+    if $(this).scrollTop() > 100
+      $('#navbar').fadeOut 500
+    else
+      $('#navbar').fadeIn 500
+CODE
+
 #========== Title ==========#
 inside 'app/views/layouts/' do
   gsub_file 'application.html.erb', /<title>.*<\/title>/, %!<title><%= title %></title>!
@@ -228,7 +237,7 @@ CODE
 end
 
 #========== App Setup ==========#
-default_theme = :litera
+default_theme = :materia
 bs_theme = ask('Bootstrap theme name? (Go to https://bootswatch.com/4-alpha/ for available themes.) [default: %s]: ' % default_theme, :cyan)
 bs_theme = default_theme if bs_theme.blank?
 
@@ -245,11 +254,11 @@ inside('app/assets/stylesheets') do
 
   append_to_file 'application.scss', <<-CODE
 @import '#{bs_theme}/variables';
-@import '#{bs_theme}/bootswatch';
 @import 'bootstrap';
+@import '#{bs_theme}/bootswatch';
 
 body {
-  margin: 72px auto 0 auto;
+  margin: 85px auto 0 auto;
 }
 CODE
 end
