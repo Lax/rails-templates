@@ -5,12 +5,6 @@ gem 'haml-rails'
 gem 'pg'
 gem 'puma'
 
-# i18n
-gem 'rails-i18n'
-gem 'globalize', github: 'globalize/globalize'
-gem 'activemodel-serializers-xml'
-gem 'title'
-
 gem_group :development do
   gem 'listen'
   gem 'spring'
@@ -54,7 +48,7 @@ end
 after_bundle do
   a =  { dir: __dir__, source_paths: source_paths }
   p a
-  %w{database devise factory_girl landing layout theme timeago rspec git}.each do |fn|
+  %w{i18n database devise factory_girl landing layout theme timeago rspec git}.each do |fn|
     say 'Applying %s' % fn, :cyan
     fp = 'one/%s.rb' % fn
     sfp = '%s/%s' % [__dir__, fp]
