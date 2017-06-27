@@ -1,7 +1,13 @@
 gem 'devise'
 gem 'devise-i18n'
 
-file 'spec/support/devise.rb', <<-CODE
+#========== User ==========#
+after_bundle do
+  unless File.exists? 'config/initializers/devise.rb'
+    generate 'devise:install'
+    generate :devise, :user
+
+    file 'spec/support/devise.rb', <<-CODE
 RSpec.configure do |config|
   config.include Devise::Test::ControllerHelpers, type: :controller
   config.include Devise::Test::ControllerHelpers, type: :view
@@ -9,12 +15,6 @@ RSpec.configure do |config|
   config.include Devise::Test::IntegrationHelpers, type: :request
 end
 CODE
-
-#========== User ==========#
-after_bundle do
-  unless File.exists? 'config/initializers/devise.rb'
-    generate 'devise:install'
-    generate :devise, :user
   end
 
   inside 'spec' do
