@@ -46,8 +46,7 @@ gem_group :development, :staging do
 end
 
 after_bundle do
-  a =  { dir: __dir__, source_paths: source_paths }
-  p a
+  p [:dir, __dir__, :source_paths, source_paths]
   %w{i18n database devise factory_girl landing layout theme timeago rspec git}.each do |fn|
     say 'Applying %s' % fn, :cyan
     fp = 'one/%s.rb' % fn
