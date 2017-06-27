@@ -53,7 +53,7 @@ end
 
 after_bundle do
   source_paths << __dir__
-  source_paths << 'https://github.com/Lax/rails-templates/raw/master/templates/one'
+  source_paths << 'https://github.com/Lax/rails-templates/raw/master/templates/one/'
   p source_paths
   %w{database devise factory_girl landing layout theme timeago rspec git}.each do |fn|
     say '# Applying %s' % fn, :cyan
