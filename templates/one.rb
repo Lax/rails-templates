@@ -106,6 +106,7 @@ append_to_file '.gitignore', '/db/*.sqlite'
 
 #========== Layout ==========#
 inside 'app/views/layouts/' do
+  gsub_file 'application.html.erb', /<title>.*<\/title>/, %!<title><%= title %></title>!
   gsub_file 'application.html.erb', '= yield', %!= render 'layouts/body'!
   insert_into_file 'application.html.erb', %!    <%= stylesheet_link_tag    'http://blog.liulantao.com/iconfont/iconfont/material-icons.css', media: 'all', 'data-turbolinks-track': 'reload' %>\n!, after: %!<%= stylesheet_link_tag    'application', media: 'all', 'data-turbolinks-track': 'reload' %>\n!
 
@@ -200,12 +201,14 @@ $(document).ready ->
 CODE
 
 #========== Title ==========#
-inside 'app/views/layouts/' do
-  gsub_file 'application.html.erb', /<title>.*<\/title>/, %!<title><%= title %></title>!
-end
-
 file 'config/locales/title.en.yml', <<-CODE
 en:
+  titles:
+    application: #{app_name.camelize}
+CODE
+
+file 'config/locales/title.zh-CN.yml', <<-CODE
+zh-CN:
   titles:
     application: #{app_name.camelize}
 CODE
@@ -232,6 +235,24 @@ CODE
 CODE
   end
 end
+
+#========== i18n ==========#
+inject_into_class 'app/controllers/application_controller.rb', 'ApplicationController', <<-CODE
+  before_action :set_locale
+
+  def self.default_url_options
+    { locale: I18n.locale }
+  end
+
+  def set_locale
+    if params[:locale] and I18n.available_locales.include?(params[:locale].to_s.strip.to_sym)
+      l = params[:locale].to_s.strip.to_sym
+    else
+      l = I18n.default_locale
+    end
+    I18n.locale = l
+  end
+CODE
 
 #========== App Setup ==========#
 default_theme = :materia
@@ -327,7 +348,7 @@ end
 
 #========== Comment ==========#
 after_bundle do
-  generate :model, :comment, 'user:references', 'content:text', 'commentable:references{polymorphic}:index'
+  generate :model, :comment, 'user:references', 'content:text', 'commentable:references{polymorphic}:index', '-f'
 
   inject_into_class 'app/models/user.rb', 'User', <<-CODE
 has_many :comments
@@ -395,9 +416,8 @@ CODE
 end
 
 #========== Helpers ==========#
-inside('app/helpers/') do
-  insert_into_file 'application_helper.rb', after: %/module ApplicationHelper\n/ do
-    <<-CODE
+insert_into_file 'app/helpers/application_helper.rb', after: %/module ApplicationHelper\n/ do
+  <<-CODE
   def active_class(link_path, base: '')
     append_class(link_path, append: 'active', base: base)
   end
@@ -417,7 +437,6 @@ inside('app/helpers/') do
     return cls + default
   end
 CODE
-  end
 end
 
 #========== Spec Setup ==========#
