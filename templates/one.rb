@@ -95,7 +95,7 @@ end
 
 #========== Foreman ==========#
 file 'Procfile', 'web: bundle exec puma -t 5:5 -p ${PORT:-3000} -e ${RACK_ENV:-development}'
-file '.env', <<-CODE
+file '.env-template', <<-CODE
 RACK_ENV=development
 PORT=4000
 SECRET_KEY_BASE=$(rails secret)
@@ -109,32 +109,25 @@ inside 'app/views/layouts/' do
   gsub_file 'application.html.erb', '= yield', %!= render 'layouts/body'!
   insert_into_file 'application.html.erb', %!    <%= stylesheet_link_tag    'http://blog.liulantao.com/iconfont/iconfont/material-icons.css', media: 'all', 'data-turbolinks-track': 'reload' %>\n!, after: %!<%= stylesheet_link_tag    'application', media: 'all', 'data-turbolinks-track': 'reload' %>\n!
 
-  file '_body.html.haml' do
-    <<-CODE
+  file '_body.html.haml', <<-CODE
 = render 'layouts/header'
 = render 'layouts/main'
 = render 'layouts/footer'
 CODE
-  end
 
-  file '_header.html.haml' do
-    <<-CODE
+  file '_header.html.haml', <<-CODE
 = render 'layouts/menu'
 CODE
-  end
 
-  file '_main.html.haml' do
-    <<-CODE
+  file '_main.html.haml', <<-CODE
 %main
   .container<
     = render 'layouts/flash'
   .container<
     = content_for?(:content) ? yield(:content) : yield
 CODE
-  end
 
-  file '_footer.html.haml' do
-    <<-CODE
+  file '_footer.html.haml', <<-CODE
 %footer.footer.text-muted
   .container
     .list-inline
@@ -147,10 +140,8 @@ CODE
         = surround " 由", " 提供技术支持" do
           %a<> Lax
 CODE
-  end
 
-  file '_flash.html.haml' do
-    <<-CODE
+  file '_flash.html.haml', <<-CODE
 - flash.each do |name, msg|
   %div{class: flash_class(name, [:flash, :'alert-dismissible']), role: :alert}
     %button.close{type: "button", "data-dismiss": "alert", "aria-label": "Close"}
@@ -158,10 +149,8 @@ CODE
     %strong= '[%s]' % name
     %span= msg
 CODE
-  end
 
-  file '_menu.html.haml' do
-    <<-CODE
+  file '_menu.html.haml', <<-CODE
 %nav#navbar.navbar.navbar-inverse.bg-primary.fixed-top.navbar-toggleable-sm
   %button.navbar-toggler.navbar-toggler-left.navbar-toggler-right{'aria-controls': 'navbarNavCollapse', 'aria-expanded': 'false', 'aria-label': 'Toggle navigation', 'data-target': '#navbarNavCollapse', 'data-toggle': 'collapse', type: 'button'}
     %span.navbar-toggler-icon
@@ -198,7 +187,7 @@ CODE
             .dropdown-divider
             = link_to t('menu.logout'), :destroy_user_session, method: :delete, class: active_class(destroy_user_session_path, base: 'dropdown-item')
 CODE
-  end
+
 end
 
 file 'app/assets/javascripts/navbar_hide.coffee', <<-CODE
