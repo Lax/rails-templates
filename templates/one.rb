@@ -93,6 +93,14 @@ production:
 CODE
 end
 
+#========== Foreman ==========#
+file 'Procfile', 'web: bundle exec puma -t 5:5 -p ${PORT:-3000} -e ${RACK_ENV:-development}'
+file '.env', <<-CODE
+RACK_ENV=development
+PORT=4000
+SECRET_KEY_BASE=$(rails secret)
+CODE
+
 #========== Git ==========#
 append_to_file '.gitignore', '/db/*.sqlite'
 
